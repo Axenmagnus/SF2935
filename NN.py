@@ -18,7 +18,7 @@ import pandas as pd
 #The listed intervalls below are given in the assginment 
 
 
-train_data=pd.read_csv("project_train.csv")
+train_data=pd.read_csv("data.csv")
 train_data = train_data.drop(train_data[(train_data.energy >= 1) ].index)
 train_data = train_data.drop(train_data[(train_data.energy <= 0) ].index)
 
@@ -32,3 +32,6 @@ data_0=train_data.loc[train_data['Label'] == 0]
 
 #data_0.hist(bins=30)#, figsize=(15, 10))
 #data_1.hist(bins=30)#, figsize=(15, 10))
+Y=train_data["Label"]
+X=train_data.drop(columns='Label')
+
