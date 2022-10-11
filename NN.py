@@ -5,7 +5,7 @@ Created on Fri Oct  7 11:19:58 2022
 
 @author: magnusaxen
 """
-from tensorflow.keras import models, layers, utils, backend as K
+from keras import models, layers, utils, backend as K
 import matplotlib.pyplot as plt
 #import shap
 import numpy as np
@@ -18,7 +18,7 @@ import pandas as pd
 #The listed intervalls below are given in the assginment 
 
 
-train_data=pd.read_csv("data.csv")
+train_data=pd.read_csv("data1.csv")
 train_data = train_data.drop(train_data[(train_data.energy >= 1) ].index)
 train_data = train_data.drop(train_data[(train_data.energy <= 0) ].index)
 
@@ -33,5 +33,29 @@ data_0=train_data.loc[train_data['Label'] == 0]
 #data_0.hist(bins=30)#, figsize=(15, 10))
 #data_1.hist(bins=30)#, figsize=(15, 10))
 Y=train_data["Label"]
-X=train_data.drop(columns='Label')
+#X=train_data.drop(columns='key')
+X = pd.get_dummies(data=train_data, columns=['key'])
+X=X.drop(columns=['Label'])
+#X=X.drop(columns='Label')
+# %% Done with data-Prepp
+
+from keras.models import Sequential
+from keras.layers import Dense
+
+model = Sequential()
+model.add(Dense(10,input_dim=len(X.columns),activation="relu"))
+model.add(Dense(8,activation="relu"))
+model.add(Dense(4,activation="relu"))
+model.add(Dense(1,activation="sigmoid"))
+
+model.summary()
+# %%
+
+model.compile(loss="binary_crossentropy",optimizer="rmsprop",metrics=["accuracy"])
+
+model.fit(x=X,y=Y,epochs=200,verbose=1)
+
+
+
+
 
