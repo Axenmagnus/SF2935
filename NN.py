@@ -1,9 +1,4 @@
 
-
-
-
-
-#%%
 from keras import models, layers, utils, backend as K
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
@@ -43,7 +38,8 @@ Y_Test=test_data["Label"]
 X_Train=train_data
 X_Train = X_Train.drop(columns=['key'])
 X_Train = X_Train.drop(columns=['mode'])
-X_Train = X_Train.drop(columns=['instrumentalness'])
+#X_Train = X_Train.drop(columns=['instrumentalness'])
+X_Train = X_Train.drop(columns=['tempo'])
 
 X_Train =(X_Train-X_Train.mean())/X_Train.std() #<- this one works well
 X_Train=X_Train.drop(columns=['Label'])
@@ -54,7 +50,8 @@ X_Train=X_Train.drop(columns=['Label'])
 X_Test = test_data
 X_Test =X_Test.drop(columns=['key'])
 X_Test =X_Test.drop(columns=['mode'])
-X_Test = X_Test.drop(columns=['instrumentalness'])
+#X_Test = X_Test.drop(columns=['instrumentalness'])
+X_Test = X_Test.drop(columns=['tempo'])
 
 X_Test =(X_Test-X_Test.mean())/X_Test.std() #<- this one works well
 X_Test=X_Test.drop(columns=['Label'])
@@ -119,5 +116,65 @@ model.fit(x=X_Train,y=Y_Train,epochs=40)#,verbose=1)
 print(model.evaluate(X_Test,(Y_Test)))
 
 
+#%%
+
+
+org_data=pd.read_csv("data1.csv")
+org_data = org_data.drop(org_data[(org_data.energy >= 1) ].index)
+org_data = org_data.drop(org_data[(org_data.energy <= 0) ].index)
+
+org_data = org_data.drop(org_data[(org_data.loudness >= 0) ].index)
+org_data = org_data.drop(org_data[(org_data.loudness <= -100) ].index)
+
+
+Y_org=org_data["Label"]
+org_data = org_data.drop(columns=['key'])
+org_data = org_data.drop(columns=['mode'])
+#X_Train = X_Train.drop(columns=['instrumentalness'])
+org_data = org_data.drop(columns=['tempo'])
+
+org_data =(org_data-org_data.mean())/org_data.std() #<- this one works well
+org_data=org_data.drop(columns=['Label'])
+
+
+
+model = Sequential()
+model.add(Dense(9,input_dim=len(org_data.columns),activation="relu"))
+model.add(Dense(9,activation="relu"))
+#model.add(Dense(6,activation="relu"))
+#model.add(Dense(10,activation="relu"))
+#model.add(Dense(5,activation="relu"))
+model.add(Dense(9,activation="relu"))
+#model.add(Dense(5,activation="relu"))
+model.add(Dense(1,activation="sigmoid"))
+
+opt = keras.optimizers.Adam(learning_rate=0.005)
+model.compile(loss="binary_crossentropy",optimizer=opt,metrics=["accuracy"])
+
+model.fit(x=org_data,y=Y_org,epochs=40)#,verbose=1)
+
+
+
+
+#%%
+
+Predict=pd.read_csv("project_test.csv")
+
+
+Predict = Predict.drop(columns=['key'])
+Predict = Predict.drop(columns=['mode'])
+#X_Train = X_Train.drop(columns=['instrumentalness'])
+Predict = Predict.drop(columns=['tempo'])
+
+Predict =(Predict-Predict.mean())/Predict.std() #<- this one works well
+
+Predicted_Vals=model.predict(Predict)
+Predicted_Vals2=[]
+for val in Predicted_Vals:
+    if val<0.5:
+        Predicted_Vals2.append(0)
+        
+    else:
+        Predicted_Vals2.append(1)
 
 
