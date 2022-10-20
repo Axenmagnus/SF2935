@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from sklearn.preprocessing import StandardScaler, OneHotEncoder, LabelEncoder
 
-def preprocess(onehot = True):
+def preprocess(onehot = False):
 
     data = pd.read_csv("project_train.csv")
 
