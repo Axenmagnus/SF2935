@@ -25,8 +25,8 @@ train_data = train_data.drop(train_data[(train_data.loudness <= -100) ].index)
 data_1=train_data.loc[train_data['Label'] == 1]
 data_0=train_data.loc[train_data['Label'] == 0]
 
-#data_0.hist(bins=30)#, figsize=(15, 10))
-#data_1.hist(bins=30)#, figsize=(15, 10))
+data_0.hist(bins=30)#, figsize=(15, 10))
+data_1.hist(bins=30)#, figsize=(15, 10))
 train_data, test_data = train_test_split(train_data, test_size=0.2)
 Y_Train=train_data["Label"]
 Y_Test=test_data["Label"]
